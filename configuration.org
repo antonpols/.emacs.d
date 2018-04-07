@@ -1,0 +1,148 @@
+#+TITLE: Emacs Configuration
+#+AUTHOR: Anton Pols
+#+EMAIL: antonpols@gmail.com
+#+OPTIONS: toc:nil num:nil
+
+* Set Personal Information
+#+BEGIN_SRC emacs-lisp
+(setq user-full-name "Anton Pols"
+      user-mail-address "antonpols@gmail.com")
+#+END_SRC
+
+* MELPA
+** Add MELPA
+#+BEGIN_SRC emacs-lisp
+(require 'package)
+(add-to-list 'package-archives
+             '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+(package-initialize)
+#+END_SRC
+
+** Install MELPA packages
+#+BEGIN_SRC emacs-lisp
+(when (not package-archive-contents)
+  (package-refresh-contents))
+
+(defvar my-packages
+  '(auctex
+    elpy
+    helm
+    helm-projectile
+    flycheck
+    magit
+    org
+    org-bullets
+    projectile
+    py-autopep8
+    pyvenv
+    realgud
+    sphinx-doc
+    zenburn-theme) 
+  "A list of packages to ensure are installed at launch.")
+
+(dolist (p my-packages)
+  (when (not (package-installed-p p))
+    (package-install p)))
+#+END_SRC
+
+* Emacs Layout
+#+BEGIN_SRC emacs-lisp
+;; disable welcome screen, sound, menu and tool bar, enable line
+;; numbering, replace selected text when copying/typing, enable spell
+;; checker and load Zenburn theme
+(setq inhibit-startup-screen t)
+(setq initial-scratch-message nil)
+(setq ring-bell-function 'ignore)
+(menu-bar-mode -1) 
+(tool-bar-mode -1)
+(global-linum-mode t)
+(delete-selection-mode 1)
+(dolist (hook '(text-mode-hook))
+  (add-hook hook (lambda () (flyspell-mode 1))))
+(load-theme 'zenburn t)
+#+END_SRC
+
+* Helm
+#+BEGIN_SRC emacs-lisp
+(require 'helm-config)
+(global-set-key (kbd "M-x") #'helm-M-x)
+(global-set-key (kbd "C-x C-f") #'helm-find-files)
+(global-set-key (kbd "M-y") 'helm-show-kill-ring)
+(global-set-key (kbd "C-x b") 'helm-mini)
+(helm-mode 1)
+(helm-autoresize-mode t)
+#+END_SRC
+
+* Helm Projectile
+#+BEGIN_SRC emacs-lisp
+(projectile-global-mode)
+(setq projectile-completion-system 'helm)
+(setq projectile-switch-project-action 'helm-projectile)
+(helm-projectile-on)
+#+END_SRC
+
+* Tex
+#+BEGIN_SRC emacs-lisp
+;; use xetex instead of tex
+(setq-default TeX-engine 'xetex)
+#+END_SRC
+
+* Org mode
+#+BEGIN_SRC emacs-lisp
+(add-hook 'org-mode-hook 'org-indent-mode)
+(add-hook 'org-mode-hook 'visual-line-mode)
+#+END_SRC
+
+** Org bullets
+#+BEGIN_SRC emacs-lisp
+(require 'org-bullets)
+(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+#+END_SRC emacs-lisp
+
+** Org latex
+#+BEGIN_SRC emacs-lisp
+(setq org-latex-pdf-process
+  '("xelatex -interaction nonstopmode %f"
+    "xelatex -interaction nonstopmode %f"))
+(with-eval-after-load 'ox-latex
+  (add-to-list 'org-latex-classes
+             '("summary"
+               "\\documentclass{article}"
+               ("\\section{%s}" . "\\section*{%s}")
+               ("\\subsection{%s}" . "\\subsection*{%s}")
+	           ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))))
+#+END_SRC
+
+* Magit
+#+BEGIN_SRC emacs-lisp
+;; disable git integration Emacs
+(setq vc-handled-backends nil)
+
+(global-set-key (kbd "C-x g") 'magit-status)
+(global-set-key (kbd "C-x M-g") 'magit-dispatch-popup)
+#+END_SRC
+
+* Elpy
+#+BEGIN_SRC emacs-lisp
+;; enable elpy, activate default anaconda environment, use jupyter,
+;; flycheck, py-autopep8 and sphinx-doc
+(elpy-enable)
+(if (file-directory-p "~/miniconda3/")
+    (pyvenv-activate (expand-file-name "~/miniconda3/")))
+(setq python-shell-interpreter "jupyter"
+      python-shell-interpreter-args "console --simple-prompt")
+(when (require 'flycheck nil t)
+  (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+  (add-hook 'elpy-mode-hook 'flycheck-mode))
+(require 'py-autopep8)
+(add-hook 'elpy-mode-hook 'py-autopep8-enable-on-save)
+(add-hook 'python-mode-hook (lambda ()
+                              (require 'sphinx-doc)
+                              (sphinx-doc-mode t)))
+#+END_SRC
+
+* Octave
+#+BEGIN_SRC emacs-lisp
+;; use octave-mode for .m files
+(add-to-list 'auto-mode-alist '("\\.m" . octave-mode))
+#+END_SRC
