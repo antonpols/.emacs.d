@@ -36,6 +36,7 @@
     py-autopep8
     pyvenv
     realgud
+    use-package
     sphinx-doc
     zenburn-theme) 
   "A list of packages to ensure are installed at launch.")
@@ -124,11 +125,15 @@
 
 * Elpy
 #+BEGIN_SRC emacs-lisp
-;; enable elpy, activate default anaconda environment, use jupyter,
-;; flycheck, py-autopep8 and sphinx-doc
+;; enable elpy, enable automatic project based virtual environment
+;; switching, use jupyter, flycheck, py-autopep8 and sphinx-doc
 (elpy-enable)
-(if (file-directory-p "~/miniconda3/")
-    (pyvenv-activate (expand-file-name "~/miniconda3/")))
+(use-package pyvenv
+	:ensure t
+	:init
+	(setenv "WORKON_HOME" "~/miniconda3/envs/")
+	(pyvenv-mode 1)
+	(pyvenv-tracking-mode 1))
 (setq python-shell-interpreter "jupyter"
       python-shell-interpreter-args "console --simple-prompt")
 (when (require 'flycheck nil t)
