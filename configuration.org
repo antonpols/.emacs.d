@@ -131,11 +131,11 @@
 (use-package pyvenv
 	:ensure t
 	:init
-	(setenv "WORKON_HOME" "~/miniconda3/envs/")
+	(setenv "WORKON_HOME" "~/.conda/envs/")
 	(pyvenv-mode 1)
 	(pyvenv-tracking-mode 1))
-(setq python-shell-interpreter "jupyter"
-      python-shell-interpreter-args "console --simple-prompt")
+(setq python-shell-interpreter "ipython"
+      python-shell-interpreter-args "-i --simple-prompt")
 (when (require 'flycheck nil t)
   (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
   (add-hook 'elpy-mode-hook 'flycheck-mode))
