@@ -27,11 +27,13 @@
   '(auctex
     elpy
     helm
+    helm-bibtex
     helm-projectile
     flycheck
     magit
     org
     org-bullets
+    org-ref
     projectile
     py-autopep8
     pyvenv
@@ -74,12 +76,22 @@
 (helm-autoresize-mode t)
 #+END_SRC
 
-* Helm Projectile
+** Helm-projectile
 #+BEGIN_SRC emacs-lisp
 (projectile-global-mode)
 (setq projectile-completion-system 'helm)
 (setq projectile-switch-project-action 'helm-projectile)
 (helm-projectile-on)
+#+END_SRC
+
+** Helm-bibtex
+#+BEGIN_SRC emacs-lisp
+(setq bibtex-completion-bibliography
+      '("~/Dropbox/Tools/bibliography.bib"))
+(setq bibtex-completion-pdf-field "File")
+(setq bibtex-completion-pdf-open-function
+  (lambda (fpath)
+    (call-process "evince" nil 0 nil fpath)))
 #+END_SRC
 
 * Tex
@@ -94,17 +106,16 @@
 (add-hook 'org-mode-hook 'visual-line-mode)
 #+END_SRC
 
-** Org bullets
+** Org-bullets
 #+BEGIN_SRC emacs-lisp
 (require 'org-bullets)
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 #+END_SRC emacs-lisp
 
-** Org latex
+** Org-latex
 #+BEGIN_SRC emacs-lisp
-(setq org-latex-pdf-process
-  '("xelatex -interaction nonstopmode %f"
-    "xelatex -interaction nonstopmode %f"))
+(setq org-latex-pdf-process 
+  (list "latexmk -shell-escape -bibtex -f -xelatex %f"))
 (with-eval-after-load 'ox-latex
   (add-to-list 'org-latex-classes
              '("summary"
@@ -112,6 +123,14 @@
                ("\\section{%s}" . "\\section*{%s}")
                ("\\subsection{%s}" . "\\subsection*{%s}")
 	           ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))))
+#+END_SRC
+
+** Org-ref
+#+BEGIN_SRC emacs-lisp
+(setq reftex-default-bibliography '("~/Dropbox/Tools/bibliography.bib"))
+(setq org-ref-default-bibliography '("~/Dropbox/Tools/bibliography.bib"))
+(setq org-ref-open-pdf-function 'org-ref-get-mendeley-filename)
+(require 'org-ref)
 #+END_SRC
 
 * Magit
