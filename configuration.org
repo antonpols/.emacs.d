@@ -150,7 +150,7 @@
 (use-package pyvenv
 	:ensure t
 	:init
-	(setenv "WORKON_HOME" "~/.conda/envs/")
+	(setenv "WORKON_HOME" "~/miniconda3/envs/")
 	(pyvenv-mode 1)
 	(pyvenv-tracking-mode 1))
 (setq python-shell-interpreter "ipython"
