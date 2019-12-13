@@ -26,6 +26,7 @@
 (defvar my-packages
   '(auctex
     elpy
+    exec-path-from-shell
     helm
     helm-bibtex
     helm-projectile
@@ -154,7 +155,7 @@
 	(pyvenv-mode 1)
 	(pyvenv-tracking-mode 1))
 (setq python-shell-interpreter "ipython"
-      python-shell-interpreter-args "-i --simple-prompt")
+      python-shell-interpreter-args "--simple-prompt -c exec('__import__(\\'readline\\')') -i")
 (when (require 'flycheck nil t)
   (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
   (add-hook 'elpy-mode-hook 'flycheck-mode))
@@ -169,4 +170,14 @@
 #+BEGIN_SRC emacs-lisp
 ;; use octave-mode for .m files
 (add-to-list 'auto-mode-alist '("\\.m" . octave-mode))
+#+END_SRC
+* OSX Stuff
+#+BEGIN_SRC emacs-lisp
+;; inherit environment variables from the shell, set function home
+;; and end keys and set ispell location
+(when (memq window-system '(mac ns x))
+  (exec-path-from-shell-initialize))
+(global-set-key [home] 'move-beginning-of-line)
+(global-set-key [end] 'move-end-of-line)
+(setq ispell-program-name "/usr/local/bin/ispell")
 #+END_SRC
