@@ -60,13 +60,8 @@
 (dolist (hook '(text-mode-hook))
   (add-hook hook (lambda () (flyspell-mode 1))))
 (load-theme 'zenburn t)
-<<<<<<< HEAD
 (add-to-list 'default-frame-alist '(font . "Menlo-14"))
 (set-face-attribute 'default t :font "Menlo-14")
-=======
-(add-to-list 'default-frame-alist '(font . "Mono-14"))
-(set-face-attribute 'default t :font "Mono-14")
->>>>>>> master
 #+END_SRC
 
 * Helm
