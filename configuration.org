@@ -27,17 +27,13 @@
   '(auctex
     elpy
     helm
-    helm-bibtex
     helm-projectile
     flycheck
     magit
     org
     org-bullets
-    org-ref
     projectile
-    py-autopep8
     pyvenv
-    realgud
     use-package
     sphinx-doc
     zenburn-theme) 
@@ -86,16 +82,6 @@
 (helm-projectile-on)
 #+END_SRC
 
-** Helm-bibtex
-#+BEGIN_SRC emacs-lisp
-(setq bibtex-completion-bibliography
-      '("~/Dropbox/Tools/bibliography.bib"))
-(setq bibtex-completion-pdf-field "File")
-(setq bibtex-completion-pdf-open-function
-  (lambda (fpath)
-    (call-process "evince" nil 0 nil fpath)))
-#+END_SRC
-
 * Tex
 #+BEGIN_SRC emacs-lisp
 ;; use xetex instead of tex
@@ -106,6 +92,8 @@
 #+BEGIN_SRC emacs-lisp
 (add-hook 'org-mode-hook 'org-indent-mode)
 (add-hook 'org-mode-hook 'visual-line-mode)
+(setq org-latex-pdf-process
+  (list "latexmk -shell-escape -bibtex -f -xelatex %f"))
 #+END_SRC
 
 ** Org-bullets
@@ -113,27 +101,6 @@
 (require 'org-bullets)
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 #+END_SRC emacs-lisp
-
-** Org-latex
-#+BEGIN_SRC emacs-lisp
-(setq org-latex-pdf-process 
-  (list "latexmk -shell-escape -bibtex -f -xelatex %f"))
-(with-eval-after-load 'ox-latex
-  (add-to-list 'org-latex-classes
-             '("summary"
-               "\\documentclass{article}"
-               ("\\section{%s}" . "\\section*{%s}")
-               ("\\subsection{%s}" . "\\subsection*{%s}")
-	           ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))))
-#+END_SRC
-
-** Org-ref
-#+BEGIN_SRC emacs-lisp
-(setq reftex-default-bibliography '("~/Dropbox/Tools/bibliography.bib"))
-(setq org-ref-default-bibliography '("~/Dropbox/Tools/bibliography.bib"))
-(setq org-ref-open-pdf-function 'org-ref-get-mendeley-filename)
-(require 'org-ref)
-#+END_SRC
 
 * Magit
 #+BEGIN_SRC emacs-lisp
@@ -147,7 +114,7 @@
 * Elpy
 #+BEGIN_SRC emacs-lisp
 ;; enable elpy, enable automatic project based virtual environment
-;; switching, use jupyter, flycheck, py-autopep8 and sphinx-doc
+;; switching, use ipython, flycheck and sphinx-doc
 (elpy-enable)
 (use-package pyvenv
 	:ensure t
@@ -157,18 +124,11 @@
 	(pyvenv-tracking-mode 1))
 (setq python-shell-interpreter "ipython"
       python-shell-interpreter-args "-i --simple-prompt")
+(setq elpy-shell-starting-directory 'current-directory)
 (when (require 'flycheck nil t)
   (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
   (add-hook 'elpy-mode-hook 'flycheck-mode))
-(require 'py-autopep8)
-(add-hook 'elpy-mode-hook 'py-autopep8-enable-on-save)
 (add-hook 'python-mode-hook (lambda ()
                               (require 'sphinx-doc)
                               (sphinx-doc-mode t)))
-#+END_SRC
-
-* Octave
-#+BEGIN_SRC emacs-lisp
-;; use octave-mode for .m files
-(add-to-list 'auto-mode-alist '("\\.m" . octave-mode))
 #+END_SRC
