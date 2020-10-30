@@ -52,6 +52,8 @@
 (setq inhibit-startup-screen t)
 (setq initial-scratch-message nil)
 (setq ring-bell-function 'ignore)
+(setq make-backup-files nil)
+(setq auto-save-default nil)
 (menu-bar-mode -1) 
 (tool-bar-mode -1)
 (global-linum-mode t)
