@@ -36,6 +36,7 @@
     pyvenv
     use-package
     sphinx-doc
+    yaml-mode
     zenburn-theme) 
   "A list of packages to ensure are installed at launch.")
 
@@ -133,4 +134,7 @@
 (add-hook 'python-mode-hook (lambda ()
                               (require 'sphinx-doc)
                               (sphinx-doc-mode t)))
+(require 'yaml-mode)
+(add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
+(add-hook `yaml-mode-hook (lambda () (flyspell-mode -1)))
 #+END_SRC
